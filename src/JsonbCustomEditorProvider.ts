@@ -32,7 +32,7 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
 
   async revertCustomDocument(document: CustomTextDocument, _cancellation: vscode.CancellationToken): Promise<void> {
     const content = await fs.promises.readFile(document.uri.fsPath);
-    const decompressed = brotliDecompressSync(content).toString();
+    const decompressed = content.byteLength === 0 ? '' : brotliDecompressSync(content).toString();
     this.updateTextDocument(document, decompressed);
   }
 
@@ -51,7 +51,7 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
 
   async openCustomDocument(uri: vscode.Uri, _openContext: vscode.CustomDocumentOpenContext, _token: vscode.CancellationToken): Promise<vscode.CustomDocument> {
     const content = await fs.promises.readFile(uri.fsPath);
-    const decompressedContent = brotliDecompressSync(content).toString();
+    const decompressedContent = content.byteLength === 0 ? '' : brotliDecompressSync(content).toString();
     return new CustomTextDocument(uri, decompressedContent);
   }
   
@@ -64,8 +64,7 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
     const content = await fs.promises.readFile(document.uri.fsPath);
     let jsonString = '';
     try {
-      const decompressed = brotliDecompressSync(content);
-      jsonString = decompressed.toString();
+      jsonString = content.byteLength === 0 ? '' : brotliDecompressSync(content).toString();
     } catch (e) {
       jsonString = 'An error occurred while decompressing the file';
     }
