@@ -70,7 +70,7 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
     }
 
     // Créer le contenu HTML de l'éditeur personnalisé
-    webviewPanel.webview.html = this.getHtmlContent(jsonString);
+    webviewPanel.webview.html = this.getHtmlContent(webviewPanel.webview, jsonString);
 
     // Gestion de la sauvegarde et des modifications
     const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
@@ -102,7 +102,9 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
 
   }
   
-  private getHtmlContent(jsonContent: string): string {
+  private getHtmlContent(webview: vscode.Webview, jsonContent: string): string {
+    const monacoScriptPath = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', 'monaco-editor', 'min', 'vs'));
+
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -126,23 +128,17 @@ export class JsonbCustomEditorProvider implements vscode.CustomEditorProvider {
       </head>
       <body>
         <div id="container"></div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.js"></script>
+        
+        <script src="${monacoScriptPath}/loader.js"></script>
         <script>
           const vscode = acquireVsCodeApi();
-          require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' } });
+          require.config({ paths: { 'vs': '${monacoScriptPath}' } });
           require(['vs/editor/editor.main'], function() {
-            const editor = monaco.editor.create(document.getElementById('container'), {
+            monaco.editor.create(document.getElementById('container'), {
               value: ${JSON.stringify(jsonContent)},
               language: 'json',
               theme: 'vs-dark',
               automaticLayout: true
-            });
-
-            editor.onDidChangeModelContent(() => {
-              vscode.postMessage({
-                type: 'edit',
-                text: editor.getValue()
-              });
             });
           });
         </script>
