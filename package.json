@@ -14,17 +14,16 @@
   "contributes": {
     "customEditors": [
       {
-      "viewType": "jsonbEditor.view",
-      "displayName": "JSONB Custom Editor",
-      "selector": [
-      {
-          "filenamePattern": "*.jsonb"
-        }
-      ]
+        "viewType": "jsonbEditor.view",
+        "displayName": "JSONB Custom Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.jsonb"
+          }
+        ]
       }
     ]
   },
-  
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
@@ -51,7 +50,6 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "brotli": "^1.3.3",
     "monaco-editor": "^0.52.0"
   }
 }

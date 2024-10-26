@@ -1,7 +1,6 @@
 .vscode/**
 .vscode-test/**
 out/**
-node_modules/**
 src/**
 .gitignore
 .yarnrc
@@ -12,3 +11,9 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+# Exclude all node_modules except monaco-editor
+
+node_modules/**
+!node_modules/monaco-editor/min/vs/**
+!node_modules/monaco-editor/package.json
